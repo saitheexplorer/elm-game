@@ -3,7 +3,7 @@ module View where
 import Graphics.Collage exposing (..)
 import Graphics.Element exposing (..)
 
-import Types exposing ( Model )
+import Types exposing ( Model, State )
 
 getSprite : Model -> Element
 getSprite model =
@@ -22,12 +22,13 @@ getSprite model =
     "/assets/img/player/" ++ verb ++ "_" ++ dir ++ ".gif"
       |> image 120 120
 
-view : (Int, Int) -> Model -> Element
-view (w, h) model =
+view : (Int, Int) -> State -> Element
+view (w, h) state =
   let
     w' = toFloat w
     h' = toFloat h
 
+    model = state.model
     player = getSprite model
 
     groundY = 100 - h'/2

@@ -12,3 +12,7 @@ type alias Model =
   , dir : Direction
   , isShooting : Bool
   }
+
+type alias State =
+  { model : Model
+  }

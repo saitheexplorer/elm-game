@@ -7,7 +7,7 @@ import Time
 import Debug
 import Window
 
-import Types exposing ( Model, Keys )
+import Types exposing ( Model, Keys, State )
 import View exposing ( view )
 import Input exposing ( input )
 
@@ -19,6 +19,11 @@ robot =
   , vy = 0
   , dir = Types.Right
   , isShooting = False
+  }
+
+start : State
+start =
+  { model = robot
   }
 
 walk : Keys -> Model -> Model
@@ -56,8 +61,8 @@ physics dt model =
     , y = max 0 (model.y + dt * model.vy)
   }
 
-update : (Float, Keys) -> Model -> Model
-update (dt, keys) model =
+updatePlayer : (Float, Keys) -> Model -> Model
+updatePlayer (dt, keys) model =
   let
     log = Debug.watch "keys" (model.isShooting)
   in
@@ -68,12 +73,16 @@ update (dt, keys) model =
       |> shoot keys
       |> physics dt
 
+update : (Float, Keys) -> State -> State
+update (dt, keys) state =
+  { state | model = updatePlayer (dt, keys) state.model }
+
 -- SIGNALS
 
 main : Signal Element
 main =
   let
-    state = Signal.foldp update robot input
+    state = Signal.foldp update start input
   in
     Signal.map2 view Window.dimensions state
 
