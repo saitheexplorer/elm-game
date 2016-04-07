@@ -4,9 +4,10 @@ import Graphics.Collage exposing (..)
 import Graphics.Element exposing (..)
 
 import Types exposing ( Model, State )
+import Bullet
 
-getSprite : Model -> Element
-getSprite model =
+viewPlayer : Model -> Form
+viewPlayer model =
   let
     verb =
       if model.y > 0 then "jump"
@@ -21,6 +22,8 @@ getSprite model =
   in
     "/assets/img/player/" ++ verb ++ "_" ++ dir ++ ".gif"
       |> image 120 120
+      |> toForm
+      |> move (model.x, model.y)
 
 view : (Int, Int) -> State -> Element
 view (w, h) state =
@@ -29,21 +32,33 @@ view (w, h) state =
     h' = toFloat h
 
     model = state.model
-    player = getSprite model
 
     groundY = 100 - h'/2
     leftX = 30 - w'/2
 
-    position =
-      (model.x + leftX , model.y + groundY)
-  in
-    collage w h [
+    player =
+      viewPlayer model
+        |> move (leftX , groundY)
+
+    background =
       fittedImage w h "/assets/img/level/background.gif"
         |> toForm
-    , tiledImage w 50 "/assets/img/level/platform.gif"
+
+    floor =
+      tiledImage w 50 "/assets/img/level/platform.gif"
         |> toForm
         |> move (0, 24 - h'/2)
-    , player
-        |> toForm
-        |> move position
-    ]
+
+    bullets =
+      state.bullets
+        |> List.map Bullet.view
+        |> List.map (move (leftX, groundY))
+
+    scene =
+      background ::
+      floor ::
+      player ::
+      bullets
+
+  in
+    collage w h scene

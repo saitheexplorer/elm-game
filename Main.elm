@@ -7,7 +7,9 @@ import Time
 import Debug
 import Window
 
-import Types exposing ( Model, Keys, State )
+import Bullet
+
+import Types exposing ( Body, Model, Keys, State, Bullet )
 import View exposing ( view )
 import Input exposing ( input )
 
@@ -24,6 +26,13 @@ robot =
 start : State
 start =
   { model = robot
+  , bullets = [{
+      x = 100
+    , y = 0
+    , vx = 5
+    , x0 = 100
+    , dir = Types.Right
+  }]
   }
 
 walk : Keys -> Model -> Model
@@ -75,7 +84,10 @@ updatePlayer (dt, keys) model =
 
 update : (Float, Keys) -> State -> State
 update (dt, keys) state =
-  { state | model = updatePlayer (dt, keys) state.model }
+  { state |
+      model = updatePlayer (dt, keys) state.model
+    , bullets = Bullet.update (dt, keys) state.model state.bullets
+  }
 
 -- SIGNALS
 
