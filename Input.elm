@@ -4,9 +4,13 @@ import Signal
 import Keyboard
 import Time
 
-import Types exposing ( Keys )
+type alias Keys =
+  { x : Int
+  , y : Int
+  , space : Bool
+  }
 
-mergeKeys : {x: Int, y: Int} -> Bool -> Keys
+mergeKeys : {x : Int, y : Int} -> Bool -> Keys
 mergeKeys keys spacebar =
   { x = keys.x
   , y = keys.y
